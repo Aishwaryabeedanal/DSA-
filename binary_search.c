@@ -1,47 +1,94 @@
-#include <stdio.h>
+#include<stdio.h>
 
-// Function to perform binary search
-int binarySearch(int arr[], int n, int key) {
-    int low = 0, high = n - 1;
-    while (low <= high) {
-        int mid = low + (high - low) / 2;
-        if (arr[mid] == key)
-            return mid; // Return the index if element is found
-        else if (arr[mid] < key)
-            low = mid + 1;
-        else
-            high = mid - 1;
-    }
-    return -1; // Return -1 if element is not found
-}
+// Function prototypes
+int binarysearch(int n, int nu[]);
+int readfromfile(char*, int[]);
+void writetofile(char*, int);
+void readarray(int[], int n, FILE*);
+void printarray(int[], int n, FILE*);
 
 int main() {
-    int arr[] = {20, 30, 10, 40, 50};
-    int n = sizeof(arr) / sizeof(arr[0]);
-    int key = 30;
-    int temp;
-    for(int i=0;i<n;i++)
-        for(int j=0;j<n-i-1;j++)
-    {
-        if(arr[j]>arr[j+1])
-        {
+    int n, search;
 
-            temp=arr[j];
-            arr[j]=arr[j+1];
-            arr[j+1]=temp;
-        }
+    // Read the number of elements from the input file
+    n = readfromfile("input.txt", NULL);
+
+    // Check if reading from file failed
+    if (n == 0) {
+        printf("Unable to read data from file\n");
+        return 1;
     }
-    for(int i=0;i<n;i++)
-    {
-        printf("%d\t",arr[i]);
+
+    // Declare an array to store the elements
+    int nu[n];
+
+    // Read the elements from the file into the array
+    if (readfromfile("input.txt", nu) != n) {
+        printf("Unable to read data from file\n");
+        return 1;
     }
+
     // Perform binary search
-    int index = binarySearch(arr, n, key);
+    search = binarysearch(n, nu);
 
-    if (index != -1)
-        printf("Element %d found at index %d\n", key, index);
-    else
-        printf("Element %d not found in the array\n", key);
+    // Write search result to output file
+    writetofile("output.txt", search);
 
     return 0;
 }
+
+// Function to read array from file
+int readfromfile(char* filename, int nu[]) {
+    FILE* file = fopen(filename, "r");
+    if (file == NULL) {
+        printf("Error opening input file");
+        return 0;
+    }
+    int n;
+    fscanf(file, "%d", &n); // Read the number of elements
+    if (nu == NULL) {
+        fclose(file);
+        return n;
+    }
+    int i = 0;
+    while (fscanf(file, "%d", &nu[i]) != EOF) { // Read elements until EOF
+        i++;
+    }
+    fclose(file);
+    return i; // Return the number of elements read
+}
+
+// Function to perform binary search
+int binarysearch(int n, int nu[]) {
+    int low = 0, high = n - 1, mid, key;
+    printf("\nEnter the element to be searched: ");
+    scanf("%d", &key);
+    while (low <= high) {
+        mid = (low + high) / 2;
+        if (nu[mid] == key) {
+            return mid; // Return index if key is found
+        } else if (nu[mid] > key) {
+            high = mid - 1;
+        } else {
+            low = mid + 1;
+        }
+    }
+    return -1; // Return -1 if key is not found
+}
+
+// Function to write search result to file
+void writetofile(char* filename, int search) {
+    FILE* file = fopen(filename, "w");
+    if (file == NULL) {
+        printf("Error opening input file");
+        return;
+    }
+    if (search != -1) {
+        fprintf(file, "Key element is found at index: %d\n", search); // Write if key is found
+    } else {
+        fprintf(file, "Key element not found\n"); // Write if key is not found
+    }
+    fclose(file);
+    printf("\nSearch result is written to %s\n", filename);
+}
+
