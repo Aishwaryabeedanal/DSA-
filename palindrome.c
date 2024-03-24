@@ -20,17 +20,17 @@ bool isPalindromeString(char *str) {
 
 int main() {
     char str[100];
-
+    
     // Input string from the user
     printf("Enter a string: ");
     scanf("%s", str);
-
+    
     // Check if the string is a palindrome
     if (isPalindromeString(str)) {
         printf("%s is a palindrome string.\n", str);
     } else {
         printf("%s is not a palindrome string.\n", str);
     }
-
+    
     return 0;
 }
