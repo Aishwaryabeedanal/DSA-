@@ -1,26 +1,104 @@
-#include <stdio.h>
+#include<stdio.h>
+int linearsearch(int n,int nu[]);
+int readfromfile(char*,int[]);
+void writetofile(char*,int);
+void readarray(int[],int n,FILE*);
+void printarray(int[],int n,FILE*);
 
-// Function to perform linear search
-int linearSearch(int arr[], int n, int key) {
-    for (int i = 0; i < n; i++) {
-        if (arr[i] == key)
-            return i; // Return the index if element is found
+
+int main()
+{
+    int n,search;
+    n=readfromfile("input.txt",NULL);
+    if(n==0)
+    {
+        printf("Unable to read data from file\n");
+        return 1;
     }
-    return -1; // Return -1 if element is not found
+    int nu[n];
+    if(readfromfile("input.txt",nu)!=n)
+    {
+        printf("Unable to read data from file\n");
+        return 1;
+    }
+    search=linearsearch(n,nu);
+    writetofile("output.txt",search);
+    return 0;
+}
+void readarray(int nu[],int n,FILE *file)
+{
+    int i;
+    printf("enter the array value:");
+    for(i=0;i<n;i++)
+    {
+        fscanf(file,"%d",&nu[i]);
+    }
+}
+void printarray(int nu[],int n,FILE *file)
+{
+    int i;
+    printf("\narray value are:");
+    for(i=0;i<n;i++)
+    {
+        fprintf(file,"\n%d",nu[i]);
+    }
 }
 
-int main() {
-    int arr[] = {10, 20, 30, 40, 50};
-    int n = sizeof(arr) / sizeof(arr[0]);
-    int key = 30;
+int linearsearch(int n,int nu[])
+{
+    int i,key;
+    printf("\nenter the element to be search");
+    scanf("%d",&key);
+    for(i=0;i<n;i++)
+    {
+        if(nu[i]==key)
+        {
+           return i;
+        }
+    }
+    return -1;
 
-    // Perform linear search
-    int index = linearSearch(arr, n, key);
-
-    if (index != -1)
-        printf("Element %d found at index %d\n", key, index);
+}
+void writetofile(char*filename,int search)
+{
+    FILE *file=fopen(filename,"w");
+    if(file==NULL)
+    {
+        fprintf(file,"key element is found");
+        return;
+    }
+    if(search!=-1)
+    {
+        fprintf(file,"key element is found");
+    }
     else
-        printf("Element %d not found in the array\n", key);
+    {
+        fprintf(file,"key element not found");
+    }
 
-    return 0;
+    fclose(file);
+    printf("\nsearch result is written to %s\n",filename);
+}
+int readfromfile(char*filename,int nu[])
+{
+    FILE *file=fopen(filename,"r");
+    if(file==NULL)
+    {
+        printf("Error opening input file");
+        return 0;
+    }
+    int n;
+    fscanf(file,"%d",&n);
+    if(nu==NULL)
+    {
+        fclose(file);
+        return n;
+    }
+    int i=0;
+    while(fscanf(file,"%d",&nu[i])!=EOF)
+    {
+        i++;
+    }
+    fclose(file);
+    return i;
 }
