@@ -1,38 +1,81 @@
-#include <stdio.h>
-#include <stdbool.h>
+#include<stdio.h>
 
-bool isPrime(int num) {
-    // Handling special cases
-    if (num <= 1) {
-        return false; // 0 and 1 are not prime
-    }
-    if (num <= 3) {
-        return true; // 2 and 3 are prime
-    }
+// Function prototypes
+int prime(int);
+void readfromfile(char* filename, int *n);
+void writetofile(char* filename, char *result);
 
-    // Check if num is divisible by any number from 2 to sqrt(num)
-    for (int i = 2; i * i <= num; i++) {
-        if (num % i == 0) {
-            return false; // num is divisible by i, hence not prime
+int main() {
+    int n;
+
+    // Read an integer from the input file
+    readfromfile("input.txt", &n);
+
+    // Check if the number is prime
+    prime(n);
+
+    return 0;
+}
+
+// Function to check if a number is prime
+int prime(int n) {
+    int i, flag = 1;
+
+    // Loop to check for factors of n
+    for(i = 2; i < n; i++) {
+        if(n % i == 0) {
+            flag = 0;
+            break;
         }
     }
 
-    return true; // If num is not divisible by any number from 2 to sqrt(num), it is prime
-}
+    // Declare a character array to store result
+    char result[50];
 
-int main() {
-    int number;
-
-    // Input number from the user
-    printf("Enter a number: ");
-    scanf("%d", &number);
-
-    // Check if the number is prime
-    if (isPrime(number)) {
-        printf("%d is a prime number.\n", number);
+    // Write the result to the result string
+    if(flag == 1) {
+        sprintf(result, "\nThe given number is a prime number");
     } else {
-        printf("%d is not a prime number.\n", number);
+        sprintf(result, "\nThe given number is not a prime number");
     }
 
-    return 0;
+    // Write the result to the output file
+    writetofile("output.txt", result);
+}
+
+// Function to read an integer from a file
+void readfromfile(char* filename, int *n) {
+    FILE *file = fopen(filename, "r");
+
+    // Check if the file opened successfully
+    if(file == NULL) {
+        printf("Error opening input file");
+        return;
+    }
+
+    // Read an integer from the file
+    fscanf(file, "%d", n);
+
+    // Close the file
+    fclose(file);
+}
+
+// Function to write a string to a file
+void writetofile(char* filename, char *result) {
+    FILE *file = fopen(filename, "w");
+
+    // Check if the file opened successfully
+    if(file == NULL) {
+        printf("Error opening output file %s", filename);
+        return;
+    }
+
+    // Write the result to the file
+    fprintf(file, "%s\n", result);
+
+    // Close the file
+    fclose(file);
+
+    // Print a message indicating successful write
+    printf("\nResults are written to %s\n", filename);
 }
